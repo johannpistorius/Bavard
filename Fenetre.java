@@ -45,7 +45,7 @@ public class Fenetre extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				b = new Bavard(text.getText(),c);
 				c.addListener(b);
-				b.createPapotageEvent("OnLineBavardEvent", "User "+ b.getLogin()+" has join the channel!");
+				b.createPapotageEvent("OnLineBavardEvent", "User "+ b.getLogin()+" has joined the channel!");
 				c.message(b);
 				miseAJour();
 			}
@@ -134,7 +134,7 @@ public class Fenetre extends JFrame{
 		JLabel newJLabel = new JLabel();
 		for(PapotageEvent object:b.papotageEvent) {
 			if(object.getSujet()!= "OnLineBavardEvent" && object.getSujet()!="OffLineBavardEvent") {
-				newJLabel.setText(object.getBavard().getLogin()+ " say: " + object.getCorps()+ " at "+ object.getDate());
+				newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps()+ " at "+ object.getDate());
 				pane.add(newJLabel);
 				setContentPane(pane);
 			}else {
