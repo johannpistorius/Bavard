@@ -10,6 +10,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -26,12 +29,13 @@ public class Fenetre extends JFrame{
 	private JComboBox<Object> box;
 	public Fenetre(Concierge c) {
 		this.c=c;
-		c.addFenetre(this);
+		this.pane=new JPanel();
 		init();
+		
 	}
 	public final void init() {
-		
-		pane=new JPanel();
+		this.pane.removeAll();
+		c.removeFenetre(this);
 		label = new JLabel();
 		label.setText("Login");
 		text = new JTextField(20);  
@@ -41,6 +45,8 @@ public class Fenetre extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				b = new Bavard(text.getText(),c);
 				c.addListener(b);
+				b.createPapotageEvent("OnLineBavardEvent", "User "+ b.getLogin()+" has join the channel!");
+				c.message(b);
 				miseAJour();
 			}
 		});
@@ -81,6 +87,25 @@ public class Fenetre extends JFrame{
 	}
 	public void miseAJour() {
 		this.pane.removeAll();
+		c.addFenetre(this);
+		JMenuBar menuBar = new JMenuBar(); 
+		JMenu propos = new JMenu("A propos");
+		JMenu action = new JMenu("Action");
+		JMenuItem deco = new JMenuItem("Deconnexion");
+		action.add(deco);
+		menuBar.add(action);
+		menuBar.add(propos);
+		deco.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!");
+				c.message(b);
+				c.removeListener(b);
+				init();
+				
+			}});
+		this.setJMenuBar(menuBar);
+		
 		label = new JLabel();
 		label.setText("MESSAGE");
 		text = new JTextField(40); 
@@ -102,15 +127,21 @@ public class Fenetre extends JFrame{
 		this.pane.add(this.box);
 		this.pane.add(this.button);
 		setContentPane(pane);
-		setSize(800,800);
+		setSize(500,500);
 	}
 	
 	public void updateMessage() {
 		JLabel newJLabel = new JLabel();
 		for(PapotageEvent object:b.papotageEvent) {
-			newJLabel.setText(object.getBavard().getLogin()+ " say: " + object.getCorps()+ " at "+ object.getDate());
-			pane.add(newJLabel);
-			setContentPane(pane);
+			if(object.getSujet()!= "OnLineBavardEvent" && object.getSujet()!="OffLineBavardEvent") {
+				newJLabel.setText(object.getBavard().getLogin()+ " say: " + object.getCorps()+ " at "+ object.getDate());
+				pane.add(newJLabel);
+				setContentPane(pane);
+			}else {
+				newJLabel.setText(object.getCorps()+ " at "+ object.getDate());
+				pane.add(newJLabel);
+				setContentPane(pane);
+			}
 		}
 	}
 	

@@ -14,6 +14,12 @@ public class Concierge {
 	public void addFenetre(Fenetre f) {
 		fenetre.add(f);
 	}
+	public void removeFenetre(Fenetre f) {
+		fenetre.remove(f);
+	}
+	public void removeListener(Bavard b) {
+		bavards.remove(b);
+	}
     public void afficherBavard() {
         this.bavards.forEach(listener -> System.out.println(listener));
     }
