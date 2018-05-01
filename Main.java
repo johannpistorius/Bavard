@@ -9,5 +9,4 @@ public class Main {
 		//Fenetre window2=new Fenetre(c); 
 		
 	}
-
 }

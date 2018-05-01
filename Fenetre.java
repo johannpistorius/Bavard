@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
@@ -35,6 +36,7 @@ public class Fenetre extends JFrame{
 	}
 	public final void init() {
 		this.pane.removeAll();
+		this.setJMenuBar(null);
 		c.removeFenetre(this);
 		label = new JLabel();
 		label.setText("Login");
@@ -81,6 +83,7 @@ public class Fenetre extends JFrame{
 		setResizable(true);
 		setContentPane(pane);
 		setTitle("Papoter");
+		pane.setBackground(null);
 		setSize(300,300);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
@@ -126,19 +129,27 @@ public class Fenetre extends JFrame{
 		this.pane.add(this.text);
 		this.pane.add(this.box);
 		this.pane.add(this.button);
+		pane.setBackground(Color.CYAN);
 		setContentPane(pane);
 		setSize(500,500);
 	}
 	
 	public void updateMessage() {
 		JLabel newJLabel = new JLabel();
+		ImageIcon img = new ImageIcon();
+		JLabel jLabelImg = new JLabel();
 		for(PapotageEvent object:b.papotageEvent) {
+			BufferedImage Buffimg = generateIdenticons(object.getBavard().getLogin(),20,20);
+			img.setImage(Buffimg);
+			jLabelImg.setIcon(img);
 			if(object.getSujet()!= "OnLineBavardEvent" && object.getSujet()!="OffLineBavardEvent") {
-				newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps()+ " at "+ object.getDate());
+				newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps()+ " at "+ object.getDate()+ " in " + object.getSujet());
+				pane.add(jLabelImg);
 				pane.add(newJLabel);
 				setContentPane(pane);
 			}else {
 				newJLabel.setText(object.getCorps()+ " at "+ object.getDate());
+				pane.add(jLabelImg);
 				pane.add(newJLabel);
 				setContentPane(pane);
 			}
@@ -178,7 +189,6 @@ public class Fenetre extends JFrame{
         at.scale(image_width / width, image_height / height);
         AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         finalImage = op.filter(identicon, finalImage);
-
         return finalImage;
 	}
 }
