@@ -1,6 +1,6 @@
 import java.time.LocalDateTime;
 
-public class PapotageEvent implements PapotageListener{
+public class PapotageEvent{
 	private String sujet;
 	private String corps;
 	private Bavard bavard;
@@ -59,5 +59,14 @@ public class PapotageEvent implements PapotageListener{
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "PapotageEvent [sujet=" + sujet + ", corps=" + corps + ", bavard=" + bavard + ", date=" + date + "]";
+	}
+	
+	
 	
 }

@@ -3,14 +3,18 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,7 +34,7 @@ public class Fenetre extends JFrame{
 	private JLabel label;
 	private JButton button;
 	private Concierge c;
-	private Bavard b;
+	public Bavard b;
 	private Object[] list;
 	private JComboBox<Object> box;
 	private JPanel messages;
@@ -56,7 +60,6 @@ public class Fenetre extends JFrame{
 				b = new Bavard(text.getText(),c);
 				c.addListener(b);
 				b.createPapotageEvent("OnLineBavardEvent", "User "+ b.getLogin()+" has joined the channel!");
-				c.message(b);
 				miseAJour();
 			}
 		});
@@ -111,8 +114,6 @@ public class Fenetre extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!");
-				c.message(b);
-				c.removeListener(b);
 				init();
 				
 			}});
@@ -121,10 +122,13 @@ public class Fenetre extends JFrame{
 		label = new JLabel();
 		label.setText("MESSAGE");
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		this.pane.add(this.label);
+		
 		text = new JTextField(40); 
 		text.setMaximumSize(new Dimension(800,24));
 		text.setMinimumSize(new Dimension(300,24));
 		text.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
 		list=new Object[] {"Sport","Cinema","Polytech","Animaux"};
 		box=new JComboBox<Object>(list);
 		box.setMaximumSize(new Dimension(800,24));
@@ -132,12 +136,15 @@ public class Fenetre extends JFrame{
 		box.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.button=new JButton("Envoyer");
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
-		this.pane.add(this.label);
+		
+		
 		this.button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				/*if(!checked.contains(box.getSelectedItem().toString())) {
+					checked.add(box.getSelectedItem().toString());
+				}*/
 				b.createPapotageEvent(box.getSelectedItem().toString(), text.getText());	
-				c.message(b);
 			}
 		});
 		BufferedImage img = generateIdenticons(b.getLogin(),50,50);
@@ -147,30 +154,57 @@ public class Fenetre extends JFrame{
 		this.messages.setLayout(new BoxLayout(messages,BoxLayout.Y_AXIS));
 		this.scrollPane=new JScrollPane(messages,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		this.vertical=scrollPane.getVerticalScrollBar();
+		
 		this.pane.add(jLabelImg);
 		this.pane.add(this.text);
 		this.pane.add(this.box);
 		this.pane.add(this.button);
+		
+		for(int i = 0; i<list.length;i++) {
+			
+			JCheckBox checkBox = new JCheckBox();
+			JLabel label1 = new JLabel(list[i].toString());
+			checkBox.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+			        if(e.getStateChange() == ItemEvent.SELECTED) {//checkbox has been selected
+			            if(!b.categ.contains(label1.getText())) {
+			            	b.categ.add(label1.getText().toString());
+			            }
+			        } else {//checkbox has been deselected
+			            b.categ.remove(label1.getText().toString());
+			        };
+					
+				}
+			});
+			this.pane.add(checkBox);
+			this.pane.add(label1);
+			
+		}
 		this.pane.add(this.scrollPane);
 		pane.setBackground(Color.lightGray);
 		setContentPane(pane);
 		setSize(500,500);
 	}
-	
+
 	public void updateMessage() {
 		JLabel newJLabel = new JLabel();
 		ImageIcon img = new ImageIcon();
 		JLabel jLabelImg = new JLabel();
+		//System.out.println(checked);
 		for(PapotageEvent object:b.papotageEvent) {
+			System.out.println(object);
 			BufferedImage Buffimg = generateIdenticons(object.getBavard().getLogin(),20,20);
 			img.setImage(Buffimg);
 			jLabelImg.setIcon(img);
 			if(object.getSujet()!= "OnLineBavardEvent" && object.getSujet()!="OffLineBavardEvent") {
+				System.out.println("titi");
 				newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps()+ " at "+ object.getDate()+ " in " + object.getSujet());
 				messages.add(jLabelImg);
 				messages.add(newJLabel);
 				setContentPane(pane);
 			}else {
+				System.out.println("toto");
 				newJLabel.setText(object.getCorps()+ " at "+ object.getDate());
 				messages.add(jLabelImg);
 				messages.add(newJLabel);
