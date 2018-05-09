@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
@@ -6,6 +8,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -15,6 +18,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -28,6 +33,9 @@ public class Fenetre extends JFrame{
 	private Bavard b;
 	private Object[] list;
 	private JComboBox<Object> box;
+	private JPanel messages;
+	private JScrollPane scrollPane;
+	private JScrollBar vertical;
 	public Fenetre(Concierge c) {
 		this.c=c;
 		this.pane=new JPanel();
@@ -90,6 +98,7 @@ public class Fenetre extends JFrame{
 	}
 	public void miseAJour() {
 		this.pane.removeAll();
+		this.pane.setLayout(new BoxLayout(pane,BoxLayout.Y_AXIS));
 		c.addFenetre(this);
 		JMenuBar menuBar = new JMenuBar(); 
 		JMenu propos = new JMenu("A propos");
@@ -111,10 +120,18 @@ public class Fenetre extends JFrame{
 		
 		label = new JLabel();
 		label.setText("MESSAGE");
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		text = new JTextField(40); 
+		text.setMaximumSize(new Dimension(800,24));
+		text.setMinimumSize(new Dimension(300,24));
+		text.setAlignmentX(Component.CENTER_ALIGNMENT);
 		list=new Object[] {"Sport","Cinema","Polytech","Animaux"};
 		box=new JComboBox<Object>(list);
+		box.setMaximumSize(new Dimension(800,24));
+		box.setMinimumSize(new Dimension(300,24));
+		box.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.button=new JButton("Envoyer");
+		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.pane.add(this.label);
 		this.button.addActionListener(new ActionListener() {
 			@Override
@@ -125,11 +142,17 @@ public class Fenetre extends JFrame{
 		});
 		BufferedImage img = generateIdenticons(b.getLogin(),50,50);
 		JLabel jLabelImg = new JLabel(new ImageIcon(img));
+		jLabelImg.setAlignmentX(Component.CENTER_ALIGNMENT);
+		this.messages=new JPanel();
+		this.messages.setLayout(new BoxLayout(messages,BoxLayout.Y_AXIS));
+		this.scrollPane=new JScrollPane(messages,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		this.vertical=scrollPane.getVerticalScrollBar();
 		this.pane.add(jLabelImg);
 		this.pane.add(this.text);
 		this.pane.add(this.box);
 		this.pane.add(this.button);
-		pane.setBackground(Color.CYAN);
+		this.pane.add(this.scrollPane);
+		pane.setBackground(Color.lightGray);
 		setContentPane(pane);
 		setSize(500,500);
 	}
@@ -144,16 +167,17 @@ public class Fenetre extends JFrame{
 			jLabelImg.setIcon(img);
 			if(object.getSujet()!= "OnLineBavardEvent" && object.getSujet()!="OffLineBavardEvent") {
 				newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps()+ " at "+ object.getDate()+ " in " + object.getSujet());
-				pane.add(jLabelImg);
-				pane.add(newJLabel);
+				messages.add(jLabelImg);
+				messages.add(newJLabel);
 				setContentPane(pane);
 			}else {
 				newJLabel.setText(object.getCorps()+ " at "+ object.getDate());
-				pane.add(jLabelImg);
-				pane.add(newJLabel);
+				messages.add(jLabelImg);
+				messages.add(newJLabel);
 				setContentPane(pane);
 			}
 		}
+		this.vertical.setValue(vertical.getMaximum());
 	}
 	
 
