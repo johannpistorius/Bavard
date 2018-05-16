@@ -50,17 +50,30 @@ public class Bavard implements PapotageListener{
 		this.papotageEvent.add(m);	
 		c.message(m);
 	}
-	
+	/**
+	 * Adds a PapotageEvent to the Bavard
+	 */
 	public void addPapotageEvent(PapotageEvent p) {
 		this.papotageEvent.add(p);
 	}
+	/**
+	 * Removes PapotageEvent p from the Bavard
+	 * @param p
+	 */
 	public void removePapotageEvent(PapotageEvent p) {
 		this.papotageEvent.remove(p);
 	}
-	
+	/**
+	 * Add a category to the Bavard
+	 * @param s
+	 */
 	public void addCategorie(String s) {
 		this.categ.add(s);
 	}
+	/**
+	 * Remove a category from the Bavard
+	 * @param s
+	 */
 	public void removeCategorie(String s) {
 		this.categ.remove(s);
 	}

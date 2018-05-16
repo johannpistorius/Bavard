@@ -46,6 +46,9 @@ public class Fenetre extends JFrame{
 		init();
 		
 	}
+	/**
+	 * Initializes JPanel to login page
+	 */
 	public final void init() {
 		this.pane.removeAll();
 		this.setJMenuBar(null);
@@ -99,6 +102,9 @@ public class Fenetre extends JFrame{
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 	}
+	/**
+	 * Once the user has logged in, this functin updates the JPanel to main messaging interface
+	 */
 	public void miseAJour() {
 		this.pane.removeAll();
 		this.pane.setLayout(new BoxLayout(pane,BoxLayout.Y_AXIS));
@@ -186,7 +192,9 @@ public class Fenetre extends JFrame{
 		setContentPane(pane);
 		setSize(500,500);
 	}
-
+	/**
+	 * This function adds a message to the JPanel
+	 */
 	public void updateMessage() {
 		JLabel newJLabel = new JLabel();
 		ImageIcon img = new ImageIcon();
@@ -216,7 +224,13 @@ public class Fenetre extends JFrame{
 		this.vertical.setValue(vertical.getMaximum());
 	}
 	
-
+	/**
+	 * Deals with the identicons
+	 * @param text
+	 * @param image_width
+	 * @param image_height
+	 * @return
+	 */
 	public static BufferedImage generateIdenticons(String text, int image_width, int image_height){
         int width = 5, height = 5;
 
