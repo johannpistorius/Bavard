@@ -199,13 +199,15 @@ public class Fenetre extends JFrame{
 			jLabelImg.setIcon(img);
 			if(object.getSujet()!= "OnLineBavardEvent" && object.getSujet()!="OffLineBavardEvent") {
 				System.out.println("titi");
-				newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps()+ " at "+ object.getDate()+ " in " + object.getSujet());
+				newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps());
+				newJLabel.setToolTipText("Time : "+ object.getDate()+ " Category : " + object.getSujet());
 				messages.add(jLabelImg);
 				messages.add(newJLabel);
 				setContentPane(pane);
 			}else {
 				System.out.println("toto");
-				newJLabel.setText(object.getCorps()+ " at "+ object.getDate());
+				newJLabel.setText(object.getCorps());
+				newJLabel.setToolTipText("Time "+ object.getDate());
 				messages.add(jLabelImg);
 				messages.add(newJLabel);
 				setContentPane(pane);
