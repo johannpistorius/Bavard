@@ -47,27 +47,21 @@ public class Concierge {
      * @param m
      */
     public void message(PapotageEvent m) {
-    	Fenetre fa = null;
+    	Fenetre fa = null;	
     	for(PapotageListener ba:bavards) {
         	for(Fenetre f:fenetre) {
         		if(f.b.equals(ba)) {
         			fa = f;
+            		if(ba instanceof Bavard) {
+            			if(((Bavard) ba).categ.contains(m.getSujet())) {
+            				if(!((Bavard) ba).getPapotageEvent().contains(m)) {
+            					ba.addPapotageEvent(m);
+            				}
+            				fa.updateMessage();
+            			}
+            		}
         		}
-        	}
-    		if(ba instanceof Bavard) {
-	    		if(!((Bavard) ba).getPapotageEvent().contains(m)) {
-	    			if(((Bavard) ba).categ.contains(m.getSujet())) {
-	    				ba.addPapotageEvent(m);
-	    				if(fa!=null) {
-	    					fa.updateMessage();
-	    				}
-	    			}
-	    		}else {
-    				if(fa!=null && ((Bavard) ba).categ.contains(m.getSujet())) {
-    					fa.updateMessage();
-    				}
-	    		}
-    		}
+        	}	
     	}
     }
 }

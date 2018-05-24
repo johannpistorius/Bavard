@@ -8,11 +8,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -24,13 +25,12 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class Fenetre extends JFrame{
 	private JPanel pane;
@@ -45,72 +45,17 @@ public class Fenetre extends JFrame{
 	private JPanel messages;
 	private JScrollPane scrollPane;
 	private JScrollBar vertical;
-	public Fenetre(Concierge c) {
+	public Fenetre(Concierge c, Bavard b) {
 		this.c=c;
+		this.b=b;
 		this.pane=new JPanel();
 		init();
 		
 	}
 	/**
-	 * Initializes JPanel to login page
+	 * Once the user has logged in, this function creates the JPanel to main messaging interface
 	 */
 	public final void init() {
-		this.pane.removeAll();
-		this.setJMenuBar(null);
-		c.removeFenetre(this);
-		label = new JLabel();
-		label.setText("Login");
-		textLogin = new JTextField(20);
-		this.button=new JButton("Connexion");
-		this.button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				b = new Bavard(textLogin.getText(),c);
-				c.addListener(b);
-				b.createPapotageEvent("OnLineBavardEvent", "User "+ b.getLogin()+" has joined the channel!");
-				miseAJour();
-			}
-		});
-		button.setEnabled(false);
-		textLogin.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				changed();
-			}
-			
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				changed();
-			}
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				changed();
-			}
-			public void changed() {
-			     if (textLogin.getText().length()<3){
-			         button.setEnabled(false);
-			       }
-			       else {
-			         button.setEnabled(true);
-			      }
-			}
-		});	
-		this.pane.add(this.label);
-		this.pane.add(this.textLogin);
-		this.pane.add(this.button);
-
-		setResizable(true);
-		setContentPane(pane);
-		setTitle("Papoter");
-		pane.setBackground(null);
-		setSize(300,300);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setVisible(true);
-	}
-	/**
-	 * Once the user has logged in, this functin updates the JPanel to main messaging interface
-	 */
-	public void miseAJour() {
 		this.pane.removeAll();
 		this.pane.setLayout(new BoxLayout(pane,BoxLayout.Y_AXIS));
 		c.addFenetre(this);
@@ -118,14 +63,23 @@ public class Fenetre extends JFrame{
 		JMenu propos = new JMenu("A propos");
 		JMenu action = new JMenu("Action");
 		JMenuItem deco = new JMenuItem("Deconnexion");
+		JMenuItem util = new JMenuItem("Liste Utilisateur");
 		action.add(deco);
+		propos.add(util);
 		menuBar.add(action);
 		menuBar.add(propos);
 		deco.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!");
-				init();
+				setVisible(false);
+				
+			}});
+		
+		util.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				FenetreUtil window=new FenetreUtil(c);
 				
 			}});
 		this.setJMenuBar(menuBar);
@@ -152,13 +106,9 @@ public class Fenetre extends JFrame{
 		this.button=new JButton("Envoyer");
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
-		
 		this.button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*if(!checked.contains(box.getSelectedItem().toString())) {
-					checked.add(box.getSelectedItem().toString());
-				}*/
 				b.createPapotageEvent(box.getSelectedItem().toString(), text.getText());	
 			}
 		});
@@ -167,7 +117,7 @@ public class Fenetre extends JFrame{
 		jLabelImg.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.messages=new JPanel();
 		this.messages.setLayout(new BoxLayout(messages,BoxLayout.Y_AXIS));
-		this.scrollPane=new JScrollPane(messages,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		this.scrollPane=new JScrollPane(messages,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.vertical=scrollPane.getVerticalScrollBar();
 		
 		this.pane.add(jLabelImg);
@@ -175,8 +125,7 @@ public class Fenetre extends JFrame{
 		this.pane.add(this.box);
 		this.pane.add(this.button);
 		
-		for(int i = 0; i<list.length;i++) {
-			
+		for(int i = 0; i<list.length;i++) {	
 			JCheckBox checkBox = new JCheckBox();
 			JLabel label1 = new JLabel(list[i].toString());
 			checkBox.addItemListener(new ItemListener() {
@@ -189,34 +138,51 @@ public class Fenetre extends JFrame{
 			        } else {//checkbox has been deselected
 			            b.categ.remove(label1.getText().toString());
 			        };
-					
 				}
 			});
 			this.pane.add(checkBox);
 			this.pane.add(label1);
-			
 		}
 		this.pane.add(this.scrollPane);
 		pane.setBackground(Color.lightGray);
 		setContentPane(pane);
+		setTitle("Papoter" +" "+ b.getLogin());
+		setResizable(true);
 		setSize(500,500);
+		setVisible(true);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		WindowAdapter exitListener = new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent e) {
+		        int confirm = JOptionPane.showOptionDialog(
+		             null, "Are you sure you want to close the application?", 
+		             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
+		             JOptionPane.QUESTION_MESSAGE, null, null, null);
+		        if (confirm == 0) {
+		        	b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!");
+					c.removeListener(b);
+					setVisible(false);
+		        }
+		    }
+		};
+		this.addWindowListener(exitListener);
 	}
 	/**
 	 * This function adds a message to the JPanel
 	 */
 	public void updateMessage() {
-		JTextArea newJLabel = new JTextArea(1,40);
+		JTextArea newJLabel = new JTextArea();
+		newJLabel.setRows(1);
+		newJLabel.setColumns(40);
 		newJLabel.setWrapStyleWord(true);
+		newJLabel.setLineWrap(true);
 		ImageIcon img = new ImageIcon();
 		JLabel jLabelImg = new JLabel();
-		//System.out.println(checked);
 		for(PapotageEvent object:b.papotageEvent) {
-			System.out.println(object);
 			BufferedImage Buffimg = generateIdenticons(object.getBavard().getLogin(),20,20);
 			img.setImage(Buffimg);
 			jLabelImg.setIcon(img);
 			if(object.getSujet()!= "OnLineBavardEvent" && object.getSujet()!="OffLineBavardEvent") {
-				System.out.println("titi");
 				if(object.getCorps().length()>10) {
 					newJLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 					newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps().substring(0, 10) + "...");
@@ -225,7 +191,6 @@ public class Fenetre extends JFrame{
 						@Override
 					    public void mouseClicked(MouseEvent e)  
 					    {  
-							// TODO Auto-generated method stub
 							newJLabel.setText(object.getBavard().getLogin()+ " says: " + object.getCorps());
 					    }
 
@@ -237,19 +202,16 @@ public class Fenetre extends JFrame{
 						@Override
 						public void mouseReleased(MouseEvent e) {
 							// TODO Auto-generated method stub
-							
 						}
 
 						@Override
 						public void mouseEntered(MouseEvent e) {
 							// TODO Auto-generated method stub
-							
 						}
 
 						@Override
 						public void mouseExited(MouseEvent e) {
-							// TODO Auto-generated method stub
-							
+							// TODO Auto-generated method stub	
 						}  
 					}); 
 				}
@@ -261,7 +223,6 @@ public class Fenetre extends JFrame{
 				messages.add(newJLabel);
 				setContentPane(pane);
 			}else {
-				System.out.println("toto");
 				newJLabel.setText(object.getCorps());
 				newJLabel.setToolTipText("Time "+ object.getDate());
 				messages.add(jLabelImg);
