@@ -72,6 +72,7 @@ public class Fenetre extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!");
+				c.removeListener(b);
 				setVisible(false);
 				
 			}});
