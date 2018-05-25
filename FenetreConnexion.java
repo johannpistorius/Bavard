@@ -44,7 +44,7 @@ public class FenetreConnexion extends JFrame{
 				if(exist == false) {
 					Bavard b = new Bavard(textLogin.getText(),c);
 					c.addListener(b);
-					b.createPapotageEvent("OnLineBavardEvent", "User "+ b.getLogin()+" has joined the channel!");
+					b.createPapotageEvent("OnLineBavardEvent", "User "+ b.getLogin()+" has joined the channel!","All");
 					Fenetre window=new Fenetre(c,b);	
 				}
 			}

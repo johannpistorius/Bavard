@@ -54,11 +54,24 @@ public class Concierge {
         			fa = f;
             		if(ba instanceof Bavard) {
             			if(((Bavard) ba).categ.contains(m.getSujet())) {
-            				if(!((Bavard) ba).getPapotageEvent().contains(m)) {
-            					ba.addPapotageEvent(m);
+            				if( m.getDestinataire().equals("All")){
+            					if(!((Bavard) ba).getPapotageEvent().contains(m)) {
+            						ba.addPapotageEvent(m);
+            					}	
+            					fa.updateMessage();
+                				fa.comboUtil();
             				}
-            				fa.updateMessage();
             			}
+            			if(((Bavard) ba).getLogin().equals(m.getDestinataire())) {
+        					ba.addPapotageEvent(m);
+        					fa.updateMessage();
+            				fa.comboUtil();
+        				} 
+            			if( ((Bavard) ba).getLogin().equals(m.getBavard().getLogin()) && !m.getDestinataire().equals("All")){
+        					fa.updateMessage();
+            				fa.comboUtil();
+        				}
+            			
             		}
         		}
         	}	

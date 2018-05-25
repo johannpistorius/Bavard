@@ -45,7 +45,7 @@ public class FenetreUtil extends JFrame{
 		
 		setResizable(true);
 		setContentPane(pane);
-		setTitle("Connexion");
+		setTitle("Liste Utilisateur");
 		pane.setBackground(null);
 		setSize(300,300);
 		setVisible(true);

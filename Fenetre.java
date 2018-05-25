@@ -30,11 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class Fenetre extends JFrame{
 	private JPanel pane;
-	private JTextField textLogin;
 	private JTextArea text;
 	private JLabel label;
 	private JButton button;
@@ -45,6 +45,7 @@ public class Fenetre extends JFrame{
 	private JPanel messages;
 	private JScrollPane scrollPane;
 	private JScrollBar vertical;
+	private JComboBox<Object> comboUtilisateur;
 	public Fenetre(Concierge c, Bavard b) {
 		this.c=c;
 		this.b=b;
@@ -71,7 +72,7 @@ public class Fenetre extends JFrame{
 		deco.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!");
+				b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!","All");
 				c.removeListener(b);
 				setVisible(false);
 				
@@ -104,13 +105,40 @@ public class Fenetre extends JFrame{
 		box.setMaximumSize(new Dimension(800,24));
 		box.setMinimumSize(new Dimension(300,24));
 		box.setAlignmentX(Component.CENTER_ALIGNMENT);
+		comboUtilisateur=new JComboBox<Object>();
+		comboUtilisateur.setMaximumSize(new Dimension(800,24));
+		comboUtilisateur.setMinimumSize(new Dimension(300,24));
+		comboUtilisateur.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.button=new JButton("Envoyer");
+		this.button.setEnabled(false);
+		text.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				changed();
+			}	
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changed();
+			}
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changed();
+			}
+			public void changed() {
+			     if (text.getText().length()<1){
+			         button.setEnabled(false);
+			       }
+			       else {
+			         button.setEnabled(true);
+			      }
+			}
+		});	
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		this.button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				b.createPapotageEvent(box.getSelectedItem().toString(), text.getText());	
+				b.createPapotageEvent(box.getSelectedItem().toString(), text.getText(),comboUtilisateur.getSelectedItem().toString());	
 			}
 		});
 		BufferedImage img = generateIdenticons(b.getLogin(),50,50);
@@ -124,8 +152,13 @@ public class Fenetre extends JFrame{
 		this.pane.add(jLabelImg);
 		this.pane.add(this.text);
 		this.pane.add(this.box);
+		this.pane.add(this.comboUtilisateur);
+		comboUtil();
 		this.pane.add(this.button);
 		
+		JPanel checkBoxPanel=new JPanel();
+		checkBoxPanel.setBackground(Color.lightGray);
+		checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel,BoxLayout.X_AXIS));
 		for(int i = 0; i<list.length;i++) {	
 			JCheckBox checkBox = new JCheckBox();
 			JLabel label1 = new JLabel(list[i].toString());
@@ -141,9 +174,10 @@ public class Fenetre extends JFrame{
 			        };
 				}
 			});
-			this.pane.add(checkBox);
-			this.pane.add(label1);
+			checkBoxPanel.add(checkBox);
+			checkBoxPanel.add(label1);
 		}
+		this.pane.add(checkBoxPanel);
 		this.pane.add(this.scrollPane);
 		pane.setBackground(Color.lightGray);
 		setContentPane(pane);
@@ -160,7 +194,7 @@ public class Fenetre extends JFrame{
 		             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
 		             JOptionPane.QUESTION_MESSAGE, null, null, null);
 		        if (confirm == 0) {
-		        	b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!");
+		        	b.createPapotageEvent("OffLineBavardEvent", "User "+ b.getLogin()+" has quit the channel!","All");
 					c.removeListener(b);
 					setVisible(false);
 		        }
@@ -232,6 +266,19 @@ public class Fenetre extends JFrame{
 			}
 		}
 		this.vertical.setValue(vertical.getMaximum());
+	}
+	
+	public void comboUtil() {
+		comboUtilisateur.removeAllItems();
+		comboUtilisateur.addItem("All");
+		for (int i=0 ; i<c.bavards.size();i++) {
+			if (c.bavards.get(i) instanceof Bavard) {
+				if(((Bavard) c.bavards.get(i)).getLogin()!= b.getLogin()){
+					comboUtilisateur.addItem(((Bavard) c.bavards.get(i)).getLogin());
+				}
+			}
+		}
+		
 	}
 	
 	/**

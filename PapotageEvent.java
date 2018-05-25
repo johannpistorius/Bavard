@@ -5,10 +5,12 @@ public class PapotageEvent{
 	private String corps;
 	private Bavard bavard;
 	private LocalDateTime date;
-	public PapotageEvent(String s, String c, Bavard b) {
+	private String destinataire;
+	public PapotageEvent(String s, String c, Bavard b, String d) {
 		this.sujet=s;
 		this.corps=c;
 		this.bavard=b;
+		this.destinataire = d;
 		this.date=LocalDateTime.now();
 	}
 	/**
@@ -58,6 +60,19 @@ public class PapotageEvent{
 	 */
 	public void setDate(LocalDateTime date) {
 		this.date = date;
+	}
+	
+	/**
+	 * @return the destinataire
+	 */
+	public String getDestinataire() {
+		return destinataire;
+	}
+	/**
+	 * @param destinataire the destinataire to set
+	 */
+	public void setDestinataire(String destinataire) {
+		this.destinataire = destinataire;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

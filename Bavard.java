@@ -45,8 +45,8 @@ public class Bavard implements PapotageListener{
 	public void setPapotageEvent(ArrayList<PapotageEvent> papotageEvent) {
 		this.papotageEvent = papotageEvent;
 	}
-	public void createPapotageEvent(String categorie, String text) {
-		PapotageEvent m = new PapotageEvent(categorie, text,this);
+	public void createPapotageEvent(String categorie, String text, String d) {
+		PapotageEvent m = new PapotageEvent(categorie, text,this,d);
 		this.papotageEvent.add(m);	
 		c.message(m);
 	}
