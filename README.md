@@ -14,3 +14,8 @@ sieurs bavards.
 Chaque
 bavard peut s’enregistrer auprès du gestionnaire afin de poster de messages et de
 recevoir les messages d’autres bavards.
+
+# Translation
+
+
+We want to build an instant messaging-style application. This application must allow users on one hand to post small messages, and on the other hand to receive messages posted by other users. Users of this system are therefore a manager, and several talkative. Each chat can register with the manager to post messages and receive messages from other chat rooms.
